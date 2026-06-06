@@ -96,7 +96,7 @@ body::after {
   width:100%; text-align:center; height:32px;
   font-size:0.42rem; color:#999; letter-spacing:0.05em; line-height:1.6;
   display:flex; align-items:center; justify-content:center;
-  margin-top:14px;
+  margin-top:6px;
 }
 .result-bar.show { color:#ff00ff; }
 .tap-counter {
@@ -128,7 +128,7 @@ body::after {
   font-size:1.1rem; letter-spacing:0.15em; text-align:center;
   animation:pulse 2s ease-in-out infinite;
   height:24px;
-  margin:60px 0 24px;
+  margin:28px 0 16px;
 }
 @keyframes pulse {
   0%,100% { color:#00ffff; text-shadow:0 0 8px #00ffff,0 0 20px #00ffff,2px 2px #ff00ff; transform:scale(1); }
@@ -303,6 +303,7 @@ body::after {
     <div class="chin-stat-row"><span>PLAYED</span><span id="statTotal">0</span></div>
     <div class="chin-stat-row"><span>NEXT TIER</span><span id="statStreak">--</span></div>
     <button class="close-btn" onclick="closeChinDrawer()">CLOSE</button>
+    <button class="close-btn" style="background:#333; color:#ff4400; margin-left:8px;" onclick="resetChinStats()">RESET</button>
   </div>
 </div>
 
@@ -508,7 +509,10 @@ function buildOptions() {
   all.forEach(function(opt) {
     var btn = document.createElement('button');
     btn.className = 'opt-btn';
-    btn.textContent = opt.name;
+    var parts = opt.name.trim().split(' ');
+    var last = parts.pop();
+    var first = parts.join(' ');
+    btn.innerHTML = first ? first + '<br>' + last : last;
     btn.onclick = function() { handleGuess(opt.name); };
     container.appendChild(btn);
   });
@@ -829,6 +833,13 @@ function openChinDrawer() {
 
 function closeChinDrawer() {
   document.getElementById('chinDrawer').classList.remove('show');
+}
+
+function resetChinStats() {
+  if (!confirm('Reset all chin stats to zero?')) return;
+  localStorage.removeItem('chinStats');
+  updateChinUI();
+  closeChinDrawer();
 }
 
 function recordGuess(isCorrect) {
