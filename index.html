@@ -297,7 +297,6 @@ body::after {
 
   <button class="chin-icon-btn" onclick="openChinDrawer()" title="My Avatar" id="avatarBtn">
     <!-- filled by JS -->
-    <span class="chin-icon-label" id="avatarLabel">&nbsp;</span>
   </button>
 </div>
 
@@ -810,7 +809,7 @@ function renderAvatarImg(tier, size) {
     'BABY CHINO': 'avatar-baby_chino.jpg'
   };
   var src = files[tier.label] || 'avatar-baby_chino.jpg';
-  return '<img src="' + src + '" width="' + s + '" height="' + s + '" style="object-fit:cover;border-radius:50%;display:block;" alt="' + tier.label + '">';
+  return '<img src="' + src + '" width="' + s + '" height="' + s + '" style="object-fit:cover;border-radius:50%;display:block;" alt="">';
 }
 
 function updateChinUI() {
@@ -822,11 +821,6 @@ function updateChinUI() {
   var tier = pct !== null ? getTier(pct) : CHIN_TIERS[CHIN_TIERS.length - 1];
   var btn = document.getElementById('avatarBtn');
   btn.innerHTML = renderAvatarImg(tier, 36);
-  var lbl = document.createElement('span');
-  lbl.className = 'chin-icon-label';
-  lbl.id = 'avatarLabel';
-  lbl.textContent = tier.label.split(' ')[0];
-  btn.appendChild(lbl);
 }
 
 function openChinDrawer() {
