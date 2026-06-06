@@ -32,7 +32,7 @@ body::after {
   width:100%; max-width:420px; height:100dvh;
   display:flex; flex-direction:column;
   align-items:center;
-  padding:5vh 20px 6vh;
+  padding:calc(52px + 5vh) 20px 6vh;
   gap:0;
 }
 .middle-row {
@@ -175,9 +175,145 @@ body::after {
   font-family:'Press Start 2P',monospace; font-size:0.6rem;
   cursor:pointer; margin-top:16px;
 }
+
+/* ── Chin Rating Bar ─────────────────────────────────────── */
+#chinBar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  z-index: 100;
+  background: rgba(253,253,251,0.92);
+  backdrop-filter: blur(4px);
+
+  box-sizing: border-box;
+}
+.chin-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 64px;
+  height: 44px;
+}
+.chin-icon-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.35rem;
+  color: #888;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+#chinRatingPct {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1rem;
+  color: #ff00ff;
+  text-shadow: 0 0 8px #ff00ff;
+  letter-spacing: 0.05em;
+}
+
+/* ── My Chin Drawer ──────────────────────────────────────── */
+#chinDrawer {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 400;
+  padding: 30px;
+}
+#chinDrawer.show { display: flex; }
+.chin-drawer-content {
+  font-family: 'Press Start 2P', monospace;
+  color: #fff;
+  font-size: 0.55rem;
+  line-height: 2;
+  text-align: center;
+  max-width: 320px;
+  letter-spacing: 0.05em;
+  width: 100%;
+}
+.chin-drawer-content h3 {
+  color: #ff00ff;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+.chin-avatar-large {
+  margin: 16px auto;
+  width: 80px;
+  height: 80px;
+}
+.chin-tier-label {
+  color: #00ffff;
+  font-size: 0.6rem;
+  margin: 4px 0 12px;
+}
+.chin-stat-row {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #333;
+  padding: 8px 0;
+  font-size: 0.45rem;
+  color: #aaa;
+}
+.chin-stat-row span:last-child { color: #fff; }
+.chin-drawer-content .close-btn {
+  background: #ff00ff;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  cursor: pointer;
+  margin-top: 16px;
+}
 </style>
 </head>
 <body>
+
+<div id="chinBar">
+  <button class="chin-icon-btn" onclick="openChinDrawer()" title="My Chin">
+    <svg width="36" height="36" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="14" cy="12" rx="7" ry="8.5" fill="#1a1a1a"/>
+      <ellipse cx="14" cy="21" rx="4" ry="2.5" fill="#1a1a1a"/>
+      <circle cx="12" cy="19" r="1" fill="#ff00ff"/>
+      <circle cx="14" cy="20" r="1" fill="#ff00ff"/>
+      <circle cx="16" cy="19" r="1" fill="#ff00ff"/>
+      <circle cx="11" cy="17.5" r="0.8" fill="#444"/>
+      <circle cx="17" cy="17.5" r="0.8" fill="#444"/>
+    </svg>
+    <span class="chin-icon-label">MY CHIN</span>
+  </button>
+
+  <span id="chinRatingPct">--%</span>
+
+  <button class="chin-icon-btn" onclick="openChinDrawer()" title="My Avatar" id="avatarBtn">
+    <!-- filled by JS -->
+    <span class="chin-icon-label" id="avatarLabel">&nbsp;</span>
+  </button>
+</div>
+
+<div id="chinDrawer" onclick="if(event.target===this)closeChinDrawer()">
+  <div class="chin-drawer-content">
+    <h3>MY CHIN</h3>
+    <div class="chin-avatar-large" id="drawerAvatar"></div>
+    <div class="chin-tier-label" id="drawerTierLabel"></div>
+    <div id="drawerPct" style="font-size:1.1rem; color:#ff00ff; text-shadow:0 0 10px #ff00ff; margin-bottom:8px;"></div>
+    <div class="chin-stat-row"><span>CORRECT</span><span id="statCorrect">0</span></div>
+    <div class="chin-stat-row"><span>TOTAL</span><span id="statTotal">0</span></div>
+    <div class="chin-stat-row"><span>STREAK</span><span id="statStreak">0</span></div>
+    <button class="close-btn" onclick="closeChinDrawer()">CLOSE</button>
+  </div>
+</div>
+
 <div id="app">
   
   <div class="middle-row">
@@ -444,6 +580,7 @@ function handleGuess(name) {
   var counter = document.getElementById('tapCounter');
 
   guessed = true;
+  recordGuess(isRight);
 
   // Disable all buttons
   document.querySelectorAll('.opt-btn').forEach(function(btn) {
@@ -627,6 +764,106 @@ function launchConfetti() {
 // Init
 buildOrder();
 loadCeleb();
+
+
+// ── Chin Rating System ────────────────────────────────────────────────────
+
+var CHIN_TIERS = [
+  { min: 85, label: 'IBEX',        color: '#ff00ff' },
+  { min: 65, label: 'NEFERTITI',   color: '#00ffff' },
+  { min: 45, label: 'BEAR',        color: '#00ff88' },
+  { min: 25, label: 'CHINCHILLA',  color: '#ffcc00' },
+  { min:  0, label: 'BABY CHINO',  color: '#ff4400' }
+];
+
+function getTier(pct) {
+  for (var i = 0; i < CHIN_TIERS.length; i++) {
+    if (pct >= CHIN_TIERS[i].min) return CHIN_TIERS[i];
+  }
+  return CHIN_TIERS[CHIN_TIERS.length - 1];
+}
+
+function loadChinStats() {
+  try {
+    return JSON.parse(localStorage.getItem('chinStats') || '{"correct":0,"total":0,"streak":0}');
+  } catch(e) {
+    return { correct: 0, total: 0, streak: 0 };
+  }
+}
+
+function saveChinStats(stats) {
+  localStorage.setItem('chinStats', JSON.stringify(stats));
+}
+
+function getChinPct(stats) {
+  if (!stats.total) return null;
+  return Math.round((stats.correct / stats.total) * 100);
+}
+
+function renderAvatarImg(tier, size) {
+  var s = size || 36;
+  var files = {
+    'IBEX':       'avatar-ibex.jpg',
+    'NEFERTITI':  'avatar-nefertiti.jpg',
+    'BEAR':       'avatar-edge_bear.jpg',
+    'CHINCHILLA': 'avatar-chinchilla.jpg',
+    'BABY CHINO': 'avatar-baby_chino.jpg'
+  };
+  var src = files[tier.label] || 'avatar-baby_chino.jpg';
+  return '<img src="' + src + '" width="' + s + '" height="' + s + '" style="object-fit:cover;border-radius:50%;display:block;" alt="' + tier.label + '">';
+}
+
+function updateChinUI() {
+  var stats = loadChinStats();
+  var pct = getChinPct(stats);
+  var display = pct !== null ? pct + '%' : '--%';
+  document.getElementById('chinRatingPct').textContent = display;
+
+  var tier = pct !== null ? getTier(pct) : CHIN_TIERS[CHIN_TIERS.length - 1];
+  var btn = document.getElementById('avatarBtn');
+  btn.innerHTML = renderAvatarImg(tier, 36);
+  var lbl = document.createElement('span');
+  lbl.className = 'chin-icon-label';
+  lbl.id = 'avatarLabel';
+  lbl.textContent = tier.label.split(' ')[0];
+  btn.appendChild(lbl);
+}
+
+function openChinDrawer() {
+  var stats = loadChinStats();
+  var pct = getChinPct(stats);
+  var tier = pct !== null ? getTier(pct) : CHIN_TIERS[CHIN_TIERS.length - 1];
+
+  document.getElementById('drawerAvatar').innerHTML = renderAvatarImg(tier, 80);
+  document.getElementById('drawerTierLabel').textContent = tier.label;
+  document.getElementById('drawerTierLabel').style.color = tier.color;
+  document.getElementById('drawerPct').textContent = pct !== null ? pct + '%' : 'NO DATA YET';
+  document.getElementById('statCorrect').textContent = stats.correct;
+  document.getElementById('statTotal').textContent = stats.total;
+  document.getElementById('statStreak').textContent = stats.streak;
+  document.getElementById('chinDrawer').classList.add('show');
+}
+
+function closeChinDrawer() {
+  document.getElementById('chinDrawer').classList.remove('show');
+}
+
+function recordGuess(correct) {
+  var stats = loadChinStats();
+  stats.total++;
+  if (correct) {
+    stats.correct++;
+    stats.streak++;
+  } else {
+    stats.streak = 0;
+  }
+  saveChinStats(stats);
+  updateChinUI();
+}
+
+// Init chin UI
+updateChinUI();
+
 </script>
 
 <script>
