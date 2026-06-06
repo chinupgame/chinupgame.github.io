@@ -32,18 +32,19 @@ body::after {
   width:100%; max-width:420px; height:100dvh;
   display:flex; flex-direction:column;
   align-items:center;
-  padding:calc(64px + 5vh) 20px 6vh;
+  padding:calc(64px + 3vh) 20px 4vh;
   gap:0;
 }
 .middle-row {
   display:flex; flex-direction:row;
   align-items:flex-start; justify-content:center;
   gap:10px; width:100%;
+  margin-top:2vh;
 }
 .bar-spacer { width:12px; flex-shrink:0; }
 .points-bar {
   display:flex; flex-direction:column;
-  align-items:center; height:340px;
+  align-items:center; height:376px;
   justify-content:center; flex-shrink:0; width:12px;
 }
 .points-track {
@@ -57,7 +58,7 @@ body::after {
   height:100%;
 }
 .face-wrap {
-  position:relative; width:280px; height:340px;
+  position:relative; width:310px; height:376px;
   cursor:pointer; flex-shrink:0; overflow:hidden;
   background:#fdfdfb;
 }
@@ -93,20 +94,20 @@ body::after {
 }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 .result-bar {
-  width:100%; text-align:center; height:32px;
+  width:100%; text-align:center; height:28px;
   font-size:0.42rem; color:#999; letter-spacing:0.05em; line-height:1.6;
   display:flex; align-items:center; justify-content:center;
-  margin-top:6px;
+  margin-top:4px;
 }
 .result-bar.show { color:#ff00ff; }
 .tap-counter {
   font-family:'Press Start 2P',monospace;
   font-size:2.2rem; line-height:1; text-align:center;
   transition:color 0.2s;
-  height:50px;
+  height:46px;
   display:flex; align-items:center; justify-content:center;
   width:100%;
-  margin-top:auto;
+  margin-top:16px;
 }
 @keyframes winSwell {
   0%   { transform:scale(1); }
@@ -128,7 +129,8 @@ body::after {
   font-size:1.1rem; letter-spacing:0.15em; text-align:center;
   animation:pulse 2s ease-in-out infinite;
   height:24px;
-  margin:28px 0 16px;
+  margin-top:auto;
+  margin-bottom:24px;
 }
 @keyframes pulse {
   0%,100% { color:#00ffff; text-shadow:0 0 8px #00ffff,0 0 20px #00ffff,2px 2px #ff00ff; transform:scale(1); }
@@ -141,7 +143,7 @@ body::after {
 .opt-btn {
   background:#1a1a1a; border:none; color:#fff;
   font-family:'Press Start 2P',monospace;
-  font-size:0.6rem; padding:12px 4px; cursor:pointer;
+  font-size:0.6rem; padding:1px 4px; cursor:pointer;
   text-align:center; line-height:1.8; text-transform:uppercase;
   transition:background 0.15s;
 }
@@ -207,11 +209,11 @@ body::after {
 .chin-icon-label {
   font-family: 'Press Start 2P', monospace;
   font-size: 0.55rem;
-  color: #ff00ff;
+  color: #00ff88;
   letter-spacing: 0.04em;
   line-height: 1.6;
   text-align: center;
-  text-shadow: 0 0 6px #ff00ff;
+  text-shadow: 0 0 6px #00ff88;
 }
 #chinRatingPct {
   font-family: 'Press Start 2P', monospace;
